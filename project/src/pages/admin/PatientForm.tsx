@@ -23,7 +23,7 @@ function PatientForm() {
     email: '',
     address: '',
     emergencyContact: '',
-    bloodType: '',
+   bloodgroup: '',
     healthIssue: '',
     diagnosis: '',
     allergies: '',
@@ -47,7 +47,8 @@ function PatientForm() {
           email: patient.email || '',
           address: patient.address,
           emergencyContact: patient.emergencyContact,
-          bloodType: patient.bloodType || '',
+         bloodgroup
+    : patient.bloodType || '',
           healthIssue: patient.healthIssue,
           diagnosis: patient.diagnosis,
           allergies: patient.allergies,
