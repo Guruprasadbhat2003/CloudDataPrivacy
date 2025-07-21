@@ -13,7 +13,7 @@ function PatientForm() {
   const { id } = useParams<{ id: string }>();
   const { getPatientById, addPatient, updatePatient } = useData();
   const isEditMode = !!id;
-  
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -23,17 +23,22 @@ function PatientForm() {
     email: '',
     address: '',
     emergencyContact: '',
-   bloodgroup: '',
+    bloodGroup: '',
+    ethnicity: '',
+    religion: '',
+    drug: '',
+    firstCareUnit: '',
+    lastCareUnit: '',
     healthIssue: '',
     diagnosis: '',
     allergies: '',
     medications: '',
     notes: '',
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   useEffect(() => {
     if (isEditMode && id) {
       const patient = getPatientById(id);
@@ -47,8 +52,12 @@ function PatientForm() {
           email: patient.email || '',
           address: patient.address,
           emergencyContact: patient.emergencyContact,
-         bloodgroup
-    : patient.bloodgroup || '',
+          bloodGroup: patient.bloodGroup || '',
+          ethnicity: patient.ethnicity || '',
+          religion: patient.religion || '',
+          drug: patient.drug || '',
+          firstCareUnit: patient.firstCareUnit || '',
+          lastCareUnit: patient.lastCareUnit || '',
           healthIssue: patient.healthIssue,
           diagnosis: patient.diagnosis,
           allergies: patient.allergies,
@@ -60,19 +69,19 @@ function PatientForm() {
       }
     }
   }, [id, isEditMode, getPatientById]);
-  
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    
+
     try {
       if (isEditMode && id) {
         updatePatient(id, formData);
@@ -86,7 +95,7 @@ function PatientForm() {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
@@ -101,13 +110,13 @@ function PatientForm() {
           Back to Dashboard
         </Button>
       </div>
-      
+
       {error && (
         <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
           {error}
         </div>
       )}
-      
+
       <Card>
         <Card.Body>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -123,7 +132,7 @@ function PatientForm() {
                     onChange={handleChange}
                     required
                   />
-                  
+
                   <Input
                     label="Last Name"
                     id="lastName"
@@ -132,7 +141,7 @@ function PatientForm() {
                     onChange={handleChange}
                     required
                   />
-                  
+
                   <Input
                     label="Date of Birth"
                     id="dateOfBirth"
@@ -142,7 +151,7 @@ function PatientForm() {
                     onChange={handleChange}
                     required
                   />
-                  
+
                   <Select
                     label="Gender"
                     id="gender"
@@ -157,27 +166,43 @@ function PatientForm() {
                       { value: 'other', label: 'Other' },
                     ]}
                   />
-                  
+
                   <Input
-                    label="Bloodgroup"
-                    id="bloodgroup"
-                    name="bloodgroup"
-                    value={formData.bloodgroup}
+                    label="Blood Group"
+                    id="bloodGroup"
+                    name="bloodGroup"
+                    value={formData.bloodGroup}
+                    onChange={handleChange}
+                  />
+
+                  <Input
+                    label="Ethnicity"
+                    id="ethnicity"
+                    name="ethnicity"
+                    value={formData.ethnicity}
+                    onChange={handleChange}
+                  />
+
+                  <Input
+                    label="Religion"
+                    id="religion"
+                    name="religion"
+                    value={formData.religion}
                     onChange={handleChange}
                   />
                 </div>
-                
+
                 <h2 className="text-lg font-medium mt-8 mb-4">Contact Information</h2>
                 <div className="space-y-4">
                   <Input
-                    label="phone"
+                    label="Phone"
                     id="phone"
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
                     required
                   />
-                  
+
                   <Input
                     label="Email"
                     type="email"
@@ -186,7 +211,7 @@ function PatientForm() {
                     value={formData.email}
                     onChange={handleChange}
                   />
-                  
+
                   <TextArea
                     label="Address"
                     id="address"
@@ -196,7 +221,7 @@ function PatientForm() {
                     required
                     rows={3}
                   />
-                  
+
                   <Input
                     label="Emergency Contact"
                     id="emergencyContact"
@@ -208,7 +233,7 @@ function PatientForm() {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <h2 className="text-lg font-medium mb-4">Medical Information</h2>
                 <div className="space-y-4">
@@ -221,7 +246,7 @@ function PatientForm() {
                     required
                     helperText="Primary health condition (e.g., Diabetes, Heart Disease)"
                   />
-                  
+
                   <TextArea
                     label="Diagnosis"
                     id="diagnosis"
@@ -231,7 +256,7 @@ function PatientForm() {
                     required
                     rows={2}
                   />
-                  
+
                   <TextArea
                     label="Allergies"
                     id="allergies"
@@ -242,7 +267,7 @@ function PatientForm() {
                     rows={2}
                     helperText="List all allergies or 'None' if not applicable"
                   />
-                  
+
                   <TextArea
                     label="Medications"
                     id="medications"
@@ -253,7 +278,32 @@ function PatientForm() {
                     rows={3}
                     helperText="Current medications with dosage"
                   />
-                  
+
+                  <Input
+                    label="Drug"
+                    id="drug"
+                    name="drug"
+                    value={formData.drug}
+                    onChange={handleChange}
+                    helperText="Any current or past drug use"
+                  />
+
+                  <Input
+                    label="First Care Unit"
+                    id="firstCareUnit"
+                    name="firstCareUnit"
+                    value={formData.firstCareUnit}
+                    onChange={handleChange}
+                  />
+
+                  <Input
+                    label="Last Care Unit"
+                    id="lastCareUnit"
+                    name="lastCareUnit"
+                    value={formData.lastCareUnit}
+                    onChange={handleChange}
+                  />
+
                   <TextArea
                     label="Additional Notes"
                     id="notes"
@@ -265,7 +315,7 @@ function PatientForm() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex justify-end pt-4 border-t border-gray-100">
               <Button
                 type="button"
