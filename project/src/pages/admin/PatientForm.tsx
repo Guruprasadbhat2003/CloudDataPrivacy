@@ -169,7 +169,7 @@ function PatientForm() {
                 <h2 className="text-lg font-medium mt-8 mb-4">Contact Information</h2>
                 <div className="space-y-4">
                   <Input
-                    label="Contact Number"
+                    label="phone"
                     id="phone"
                     name="phone"
                     value={formData.phone}
