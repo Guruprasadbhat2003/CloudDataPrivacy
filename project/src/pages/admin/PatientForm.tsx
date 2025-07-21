@@ -19,7 +19,7 @@ function PatientForm() {
     lastName: '',
     dateOfBirth: '',
     gender: '',
-    contactNumber: '',
+    phone: '',
     email: '',
     address: '',
     emergencyContact: '',
@@ -43,7 +43,7 @@ function PatientForm() {
           lastName: patient.lastName,
           dateOfBirth: patient.dateOfBirth,
           gender: patient.gender,
-          contactNumber: patient.contactNumber,
+          phone: patient.phone,
           email: patient.email || '',
           address: patient.address,
           emergencyContact: patient.emergencyContact,
@@ -170,9 +170,9 @@ function PatientForm() {
                 <div className="space-y-4">
                   <Input
                     label="Contact Number"
-                    id="contactNumber"
-                    name="contactNumber"
-                    value={formData.contactNumber}
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
                     onChange={handleChange}
                     required
                   />
