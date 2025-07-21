@@ -159,7 +159,7 @@ function PatientForm() {
                   />
                   
                   <Input
-                    label="Blood Type"
+                    label="Bloodgroup"
                     id="bloodgroup"
                     name="bloodgroup"
                     value={formData.bloodgroup}
