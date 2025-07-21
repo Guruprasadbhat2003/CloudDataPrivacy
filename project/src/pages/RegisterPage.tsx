@@ -16,20 +16,21 @@ function RegisterPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { register, error } = useAuth();
-  
+
   const { role: preselectedRole } = (location.state as LocationState) || {};
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    dateOfBirth: '',
     password: '',
     confirmPassword: '',
     role: preselectedRole || 'admin' as UserRole,
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
-  
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -37,40 +38,41 @@ function RegisterPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
     setValidationError(null);
   };
-  
+
   const validateForm = () => {
     if (formData.password !== formData.confirmPassword) {
       setValidationError("Passwords don't match");
       return false;
     }
-    
+
     if (formData.password.length < 6) {
       setValidationError('Password must be at least 6 characters long');
       return false;
     }
-    
+
     return true;
   };
-  
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setValidationError(null);
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     const success = await register({
       name: formData.name,
       email: formData.email,
+      dateOfBirth: formData.dateOfBirth,
       password: formData.password,
       role: formData.role,
     });
-    
+
     setIsLoading(false);
-    
+
     if (success) {
       // Navigate to appropriate dashboard based on role
       if (formData.role === 'admin') {
@@ -84,7 +86,7 @@ function RegisterPage() {
       }
     }
   };
-  
+
   return (
     <div className="min-h-[calc(100vh-8rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <Card className="w-full max-w-md">
@@ -97,13 +99,13 @@ function RegisterPage() {
               ? `Create ${preselectedRole === 'admin' ? 'an Admin' : `a ${preselectedRole}`} Account`
               : 'Create an account'}
           </h2>
-          
+
           {(error || validationError) && (
             <div className="mt-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
               {error || validationError}
             </div>
           )}
-          
+
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
               <Input
@@ -117,7 +119,7 @@ function RegisterPage() {
                 value={formData.name}
                 onChange={handleChange}
               />
-              
+
               <Input
                 label="Email Address"
                 id="email"
@@ -129,7 +131,17 @@ function RegisterPage() {
                 value={formData.email}
                 onChange={handleChange}
               />
-              
+
+              <Input
+                label="Date of Birth"
+                id="dateOfBirth"
+                name="dateOfBirth"
+                type="date"
+                required
+                value={formData.dateOfBirth}
+                onChange={handleChange}
+              />
+
               <Input
                 label="Password"
                 id="password"
@@ -142,7 +154,7 @@ function RegisterPage() {
                 onChange={handleChange}
                 helperText="Password must be at least 6 characters"
               />
-              
+
               <Input
                 label="Confirm Password"
                 id="confirmPassword"
@@ -154,7 +166,7 @@ function RegisterPage() {
                 value={formData.confirmPassword}
                 onChange={handleChange}
               />
-              
+
               {!preselectedRole && (
                 <Select
                   label="Role"
@@ -172,7 +184,7 @@ function RegisterPage() {
                 />
               )}
             </div>
-            
+
             <div>
               <Button
                 type="submit"
@@ -185,11 +197,11 @@ function RegisterPage() {
               </Button>
             </div>
           </form>
-          
+
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{' '}
-              <button 
+              <button
                 onClick={() => navigate('/login', { state: { role: preselectedRole } })}
                 className="font-medium text-primary-600 hover:text-primary-500"
               >
