@@ -48,7 +48,7 @@ function PatientForm() {
           address: patient.address,
           emergencyContact: patient.emergencyContact,
          bloodgroup
-    : patient.bloodType || '',
+    : patient.bloodgroup || '',
           healthIssue: patient.healthIssue,
           diagnosis: patient.diagnosis,
           allergies: patient.allergies,
@@ -160,9 +160,9 @@ function PatientForm() {
                   
                   <Input
                     label="Blood Type"
-                    id="bloodType"
-                    name="bloodType"
-                    value={formData.bloodType}
+                    id="bloodgroup"
+                    name="bloodgroup"
+                    value={formData.bloodgroup}
                     onChange={handleChange}
                   />
                 </div>
