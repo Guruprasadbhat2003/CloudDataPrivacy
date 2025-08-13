@@ -22,7 +22,9 @@ function LoginPage() {
     email: '',
     password: '',
   });
+  const [mfaCode, setMfaCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [step, setStep] = useState<'login' | 'mfa'>('login'); // Track MFA step
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -32,8 +34,16 @@ function LoginPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
-    // Provide demo login credentials based on role
+
+    // Doctor or patient: first step is sending MFA
+    if ((role === 'doctor' || role === 'patient') && step === 'login') {
+      console.log('Trigger MFA for:', formData.email);
+      setStep('mfa');
+      setIsLoading(false);
+      return;
+    }
+
+    // Prepare login data (including demo credentials)
     let demoEmail = '';
     let demoPassword = '';
     
@@ -47,27 +57,21 @@ function LoginPage() {
       demoEmail = 'researcher@hospital.com';
       demoPassword = 'research123';
     }
-    
+
     const loginData = {
       email: formData.email || demoEmail,
       password: formData.password || demoPassword,
+      mfaCode: step === 'mfa' ? mfaCode : undefined,
     };
-    
+
     const success = await login(loginData);
-    
     setIsLoading(false);
-    
+
     if (success) {
-      // Navigate to appropriate dashboard based on role
-      if (role === 'admin') {
-        navigate('/admin');
-      } else if (role === 'doctor' || role === 'staff') {
-        navigate('/doctor');
-      } else if (role === 'researcher') {
-        navigate('/researcher');
-      } else {
-        navigate('/');
-      }
+      if (role === 'admin') navigate('/admin');
+      else if (role === 'doctor' || role === 'staff') navigate('/doctor');
+      else if (role === 'researcher') navigate('/researcher');
+      else navigate('/');
     }
   };
   
@@ -120,6 +124,19 @@ function LoginPage() {
                 value={formData.password}
                 onChange={handleChange}
               />
+
+              {step === 'mfa' && (role === 'doctor' || role === 'patient') && (
+                <Input
+                  label="Enter MFA Code"
+                  id="mfaCode"
+                  name="mfaCode"
+                  type="text"
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value)}
+                  placeholder="Enter the code sent to your email/phone"
+                  required
+                />
+              )}
             </div>
             
             {role && (
@@ -139,15 +156,40 @@ function LoginPage() {
             )}
             
             <div>
-              <Button
-                type="submit"
-                variant="primary"
-                fullWidth
-                isLoading={isLoading}
-                leftIcon={<KeyRound size={16} />}
-              >
-                Sign in
-              </Button>
+              {role === 'doctor' || role === 'patient' ? (
+                step === 'login' ? (
+                  <Button
+                    type="button"
+                    variant="primary"
+                    fullWidth
+                    isLoading={isLoading}
+                    onClick={() => setStep('mfa')}
+                    leftIcon={<KeyRound size={16} />}
+                  >
+                    Get MFA
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    fullWidth
+                    isLoading={isLoading}
+                    leftIcon={<KeyRound size={16} />}
+                  >
+                    Sign in
+                  </Button>
+                )
+              ) : (
+                <Button
+                  type="submit"
+                  variant="primary"
+                  fullWidth
+                  isLoading={isLoading}
+                  leftIcon={<KeyRound size={16} />}
+                >
+                  Sign in
+                </Button>
+              )}
             </div>
           </form>
           
