@@ -34,10 +34,12 @@ function PatientForm() {
     allergies: '',
     medications: '',
     notes: '',
-    doctorName: '',         // ✅ NEW FIELD
-    doctorEmail: '',        // ✅ NEW FIELD
+    doctorName: '',
+    doctorEmail: '',
   });
 
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,8 +67,8 @@ function PatientForm() {
           allergies: patient.allergies,
           medications: patient.medications,
           notes: patient.notes || '',
-          doctorName: patient.doctorName || '',   // ✅ NEW FIELD
-          doctorEmail: patient.doctorEmail || '', // ✅ NEW FIELD
+          doctorName: patient.doctorName || '',
+          doctorEmail: patient.doctorEmail || '',
         });
       } else {
         setError('Patient not found');
@@ -81,16 +83,44 @@ function PatientForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePdfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (file.type !== 'application/pdf') {
+        setError('Only PDF files are allowed');
+        return;
+      }
+      setError(null);
+      setPdfFile(file);
+    }
+  };
+
+  const handleCsvChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (!file.name.endsWith('.csv')) {
+        setError('Only CSV files are allowed');
+        return;
+      }
+      setError(null);
+      setCsvFile(file);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-
     try {
+      const payload = {
+        ...formData,
+        pdfFile,
+        csvFile,
+      };
       if (isEditMode && id) {
-        updatePatient(id, formData);
+        updatePatient(id, payload);
       } else {
-        addPatient(formData as any);
+        addPatient(payload as any);
       }
       navigate('/admin');
     } catch (err) {
@@ -125,7 +155,6 @@ function PatientForm() {
         <Card.Body>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {/* LEFT COLUMN - PERSONAL & CONTACT */}
               <div>
                 <h2 className="text-lg font-medium mb-4">Personal Information</h2>
                 <div className="space-y-4">
@@ -150,26 +179,30 @@ function PatientForm() {
                   <Input label="Phone" id="phone" name="phone" value={formData.phone} onChange={handleChange} required />
                   <Input label="Email" type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
                   <TextArea label="Address" id="address" name="address" value={formData.address} onChange={handleChange} required rows={3} />
-                  <Input label="Emergency Contact" id="emergencyContact" name="emergencyContact" value={formData.emergencyContact} onChange={handleChange} required helperText="Name and phone number of emergency contact" />
+                  <Input label="Emergency Contact" id="emergencyContact" name="emergencyContact" value={formData.emergencyContact} onChange={handleChange} required />
                 </div>
               </div>
 
-              {/* RIGHT COLUMN - MEDICAL */}
               <div>
                 <h2 className="text-lg font-medium mb-4">Medical Information</h2>
                 <div className="space-y-4">
-                  <Input label="Health Issue" id="healthIssue" name="healthIssue" value={formData.healthIssue} onChange={handleChange} required helperText="Primary health condition (e.g., Diabetes, Heart Disease)" />
+                  <Input label="Health Issue" id="healthIssue" name="healthIssue" value={formData.healthIssue} onChange={handleChange} required />
                   <TextArea label="Diagnosis" id="diagnosis" name="diagnosis" value={formData.diagnosis} onChange={handleChange} required rows={2} />
-                  <TextArea label="Allergies" id="allergies" name="allergies" value={formData.allergies} onChange={handleChange} required rows={2} helperText="List all allergies or 'None' if not applicable" />
-                  <TextArea label="Medications" id="medications" name="medications" value={formData.medications} onChange={handleChange} required rows={3} helperText="Current medications with dosage" />
-                  <Input label="Drug" id="drug" name="drug" value={formData.drug} onChange={handleChange} helperText="Any current or past drug use" />
+                  <TextArea label="Allergies" id="allergies" name="allergies" value={formData.allergies} onChange={handleChange} required rows={2} />
+                  <TextArea label="Medications" id="medications" name="medications" value={formData.medications} onChange={handleChange} required rows={3} />
+                  <Input label="Drug" id="drug" name="drug" value={formData.drug} onChange={handleChange} />
                   <Input label="First Care Unit" id="firstCareUnit" name="firstCareUnit" value={formData.firstCareUnit} onChange={handleChange} />
                   <Input label="Last Care Unit" id="lastCareUnit" name="lastCareUnit" value={formData.lastCareUnit} onChange={handleChange} />
-
-                  {/* ✅ NEW FIELDS */}
                   <Input label="Doctor's Name" id="doctorName" name="doctorName" value={formData.doctorName} onChange={handleChange} required />
                   <Input label="Doctor's Email" type="email" id="doctorEmail" name="doctorEmail" value={formData.doctorEmail} onChange={handleChange} required />
-
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Upload PDF</label>
+                    <input type="file" accept=".pdf" onChange={handlePdfChange} className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Upload CSV</label>
+                    <input type="file" accept=".csv" onChange={handleCsvChange} className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer" />
+                  </div>
                   <TextArea label="Additional Notes" id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={4} />
                 </div>
               </div>
@@ -191,4 +224,3 @@ function PatientForm() {
 }
 
 export default PatientForm;
-
