@@ -34,6 +34,8 @@ function PatientForm() {
     allergies: '',
     medications: '',
     notes: '',
+    doctorName: '',         // ✅ NEW FIELD
+    doctorEmail: '',        // ✅ NEW FIELD
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -63,6 +65,8 @@ function PatientForm() {
           allergies: patient.allergies,
           medications: patient.medications,
           notes: patient.notes || '',
+          doctorName: patient.doctorName || '',   // ✅ NEW FIELD
+          doctorEmail: patient.doctorEmail || '', // ✅ NEW FIELD
         });
       } else {
         setError('Patient not found');
@@ -121,44 +125,14 @@ function PatientForm() {
         <Card.Body>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              {/* LEFT COLUMN - PERSONAL & CONTACT */}
               <div>
                 <h2 className="text-lg font-medium mb-4">Personal Information</h2>
                 <div className="space-y-4">
-                  <Input
-                    label="First Name"
-                    id="firstName"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    required
-                  />
-
-                  <Input
-                    label="Last Name"
-                    id="lastName"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    required
-                  />
-
-                  <Input
-                    label="Date of Birth"
-                    id="dateOfBirth"
-                    name="dateOfBirth"
-                    type="date"
-                    value={formData.dateOfBirth}
-                    onChange={handleChange}
-                    required
-                  />
-
-                  <Select
-                    label="Gender"
-                    id="gender"
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    required
+                  <Input label="First Name" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required />
+                  <Input label="Last Name" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required />
+                  <Input label="Date of Birth" id="dateOfBirth" name="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleChange} required />
+                  <Select label="Gender" id="gender" name="gender" value={formData.gender} onChange={handleChange} required
                     options={[
                       { value: '', label: 'Select gender' },
                       { value: 'male', label: 'Male' },
@@ -166,171 +140,46 @@ function PatientForm() {
                       { value: 'other', label: 'Other' },
                     ]}
                   />
-
-                  <Input
-                    label="Blood Group"
-                    id="bloodGroup"
-                    name="bloodGroup"
-                    value={formData.bloodGroup}
-                    onChange={handleChange}
-                  />
-
-                  <Input
-                    label="Ethnicity"
-                    id="ethnicity"
-                    name="ethnicity"
-                    value={formData.ethnicity}
-                    onChange={handleChange}
-                  />
-
-                  <Input
-                    label="Religion"
-                    id="religion"
-                    name="religion"
-                    value={formData.religion}
-                    onChange={handleChange}
-                  />
+                  <Input label="Blood Group" id="bloodGroup" name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} />
+                  <Input label="Ethnicity" id="ethnicity" name="ethnicity" value={formData.ethnicity} onChange={handleChange} />
+                  <Input label="Religion" id="religion" name="religion" value={formData.religion} onChange={handleChange} />
                 </div>
 
                 <h2 className="text-lg font-medium mt-8 mb-4">Contact Information</h2>
                 <div className="space-y-4">
-                  <Input
-                    label="Phone"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                  />
-
-                  <Input
-                    label="Email"
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-
-                  <TextArea
-                    label="Address"
-                    id="address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    required
-                    rows={3}
-                  />
-
-                  <Input
-                    label="Emergency Contact"
-                    id="emergencyContact"
-                    name="emergencyContact"
-                    value={formData.emergencyContact}
-                    onChange={handleChange}
-                    required
-                    helperText="Name and phone number of emergency contact"
-                  />
+                  <Input label="Phone" id="phone" name="phone" value={formData.phone} onChange={handleChange} required />
+                  <Input label="Email" type="email" id="email" name="email" value={formData.email} onChange={handleChange} />
+                  <TextArea label="Address" id="address" name="address" value={formData.address} onChange={handleChange} required rows={3} />
+                  <Input label="Emergency Contact" id="emergencyContact" name="emergencyContact" value={formData.emergencyContact} onChange={handleChange} required helperText="Name and phone number of emergency contact" />
                 </div>
               </div>
 
+              {/* RIGHT COLUMN - MEDICAL */}
               <div>
                 <h2 className="text-lg font-medium mb-4">Medical Information</h2>
                 <div className="space-y-4">
-                  <Input
-                    label="Health Issue"
-                    id="healthIssue"
-                    name="healthIssue"
-                    value={formData.healthIssue}
-                    onChange={handleChange}
-                    required
-                    helperText="Primary health condition (e.g., Diabetes, Heart Disease)"
-                  />
+                  <Input label="Health Issue" id="healthIssue" name="healthIssue" value={formData.healthIssue} onChange={handleChange} required helperText="Primary health condition (e.g., Diabetes, Heart Disease)" />
+                  <TextArea label="Diagnosis" id="diagnosis" name="diagnosis" value={formData.diagnosis} onChange={handleChange} required rows={2} />
+                  <TextArea label="Allergies" id="allergies" name="allergies" value={formData.allergies} onChange={handleChange} required rows={2} helperText="List all allergies or 'None' if not applicable" />
+                  <TextArea label="Medications" id="medications" name="medications" value={formData.medications} onChange={handleChange} required rows={3} helperText="Current medications with dosage" />
+                  <Input label="Drug" id="drug" name="drug" value={formData.drug} onChange={handleChange} helperText="Any current or past drug use" />
+                  <Input label="First Care Unit" id="firstCareUnit" name="firstCareUnit" value={formData.firstCareUnit} onChange={handleChange} />
+                  <Input label="Last Care Unit" id="lastCareUnit" name="lastCareUnit" value={formData.lastCareUnit} onChange={handleChange} />
 
-                  <TextArea
-                    label="Diagnosis"
-                    id="diagnosis"
-                    name="diagnosis"
-                    value={formData.diagnosis}
-                    onChange={handleChange}
-                    required
-                    rows={2}
-                  />
+                  {/* ✅ NEW FIELDS */}
+                  <Input label="Doctor's Name" id="doctorName" name="doctorName" value={formData.doctorName} onChange={handleChange} required />
+                  <Input label="Doctor's Email" type="email" id="doctorEmail" name="doctorEmail" value={formData.doctorEmail} onChange={handleChange} required />
 
-                  <TextArea
-                    label="Allergies"
-                    id="allergies"
-                    name="allergies"
-                    value={formData.allergies}
-                    onChange={handleChange}
-                    required
-                    rows={2}
-                    helperText="List all allergies or 'None' if not applicable"
-                  />
-
-                  <TextArea
-                    label="Medications"
-                    id="medications"
-                    name="medications"
-                    value={formData.medications}
-                    onChange={handleChange}
-                    required
-                    rows={3}
-                    helperText="Current medications with dosage"
-                  />
-
-                  <Input
-                    label="Drug"
-                    id="drug"
-                    name="drug"
-                    value={formData.drug}
-                    onChange={handleChange}
-                    helperText="Any current or past drug use"
-                  />
-
-                  <Input
-                    label="First Care Unit"
-                    id="firstCareUnit"
-                    name="firstCareUnit"
-                    value={formData.firstCareUnit}
-                    onChange={handleChange}
-                  />
-
-                  <Input
-                    label="Last Care Unit"
-                    id="lastCareUnit"
-                    name="lastCareUnit"
-                    value={formData.lastCareUnit}
-                    onChange={handleChange}
-                  />
-
-                  <TextArea
-                    label="Additional Notes"
-                    id="notes"
-                    name="notes"
-                    value={formData.notes}
-                    onChange={handleChange}
-                    rows={4}
-                  />
+                  <TextArea label="Additional Notes" id="notes" name="notes" value={formData.notes} onChange={handleChange} rows={4} />
                 </div>
               </div>
             </div>
 
             <div className="flex justify-end pt-4 border-t border-gray-100">
-              <Button
-                type="button"
-                variant="outline"
-                className="mr-4"
-                onClick={() => navigate('/admin')}
-              >
+              <Button type="button" variant="outline" className="mr-4" onClick={() => navigate('/admin')}>
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                variant="primary"
-                isLoading={isLoading}
-                leftIcon={<Save size={16} />}
-              >
+              <Button type="submit" variant="primary" isLoading={isLoading} leftIcon={<Save size={16} />}>
                 {isEditMode ? 'Update Patient' : 'Save Patient'}
               </Button>
             </div>
@@ -342,3 +191,4 @@ function PatientForm() {
 }
 
 export default PatientForm;
+
